@@ -1,0 +1,6 @@
+{
+	"subscription_id" : "fc7b8dd2-ae77-4a62-a508-07f641fa720b",
+	"certificate_path" : "/home/kent/Documents/microsoftproject/certificates/mycert.pem",
+	"number_machines" : "2",
+	"brkga_path" : "/home/kent/Documents/microsoftproject/brkgaAPI-master/examples/brkga-tsp.tar.xz"
+}
