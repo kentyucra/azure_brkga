@@ -24,14 +24,6 @@ import random
 
 #f = open('configFile', 'w');
 
-''' 
-We have to parse of some way the next variables 
-"subscription_id" : "da9c7e61-8353-43d7-9e9d-709d834d82fd"
-"certificate_path" : "/home/kent/mycert.pem"
-"number_machines" : "5"
-"brkga_path" = "home/kent/Documents/microsoftproject/brkgaAPI-master/examples/brkga-tsp"
-'''
-
 #subscription_id = 'da9c7e61-8353-43d7-9e9d-709d834d82fd'
 with open('azure_config.json') as cfg_file:    
     cfg = json.load(cfg_file)
@@ -183,10 +175,10 @@ for number_machine in range(0, number_machines):
             print("The machine " + str(number_machine) + " is not started yet!!")
             time.sleep(5)
     scp = SCPClient(ssh.get_transport())
-    scp.put(brkga_path, 'brkga-tsp.tar.xz')   
+    scp.put(brkga_path, 'brkga.tar.xz')   
     print(">>> copy of the brkga to the virtual machine " + str(number_machine) + " was executed")
-    ssh.exec_command("tar xf brkga-tsp.tar.xz")
-    print(">>> tar xf brkga-tsp.tar.xz")
+    ssh.exec_command("tar xf brkga.tar.xz")
+    print(">>> tar xf brkga.tar.xz")
     stdin, stdout, stderr = ssh.exec_command("sudo apt-get update")
     stdin.write('Azurebrkga1\n')
     stdin.flush()
@@ -197,10 +189,10 @@ for number_machine in range(0, number_machines):
     stdin.flush()
     tmp = stdout.read()
     print(">>> sudo apt-get install -y build-essential was executed")
-    stdin, stdout, stderr = ssh.exec_command("cd brkga-tsp; make clean")
+    stdin, stdout, stderr = ssh.exec_command("cd brkga; make clean")
     tmp = stdout.read()
     print(">>> make clean was executed")
-    stdin, stdout, stderr = ssh.exec_command("cd brkga-tsp; make")
+    stdin, stdout, stderr = ssh.exec_command("cd brkga; make")
     tmp = stdout.read()
     print(">>> make was executed")
 
@@ -208,7 +200,7 @@ for number_machine in range(0, number_machines):
 '''
 RUNING IN PARALLEL IN THE MACHINES
 '''
-stdouts = []
+stdouts = [0 for i in range(number_machines)]
 
 for number_machine in range(0, number_machines):
     name = 'azbrvm' + str(hash_number) + str(number_machine)
@@ -223,11 +215,9 @@ for number_machine in range(0, number_machines):
             print("The machine " + str(number_machine) + " is not started yet!!")
             time.sleep(5)
     seed = random.randint(1,99999999)
-    stdin, stdout, stderr = ssh.exec_command("cd brkga-tsp; ./brkga-tsp config " + str(seed))
-    stdouts.append(stdout)
+    stdin, stdouts[number_machine], stderr = ssh.exec_command("cd brkga; ./brkga config " + str(seed))
     #tmp = stdout.read()
     print(">>> the brkga was executed")
-
 
 '''
 WAITING FOR THE OUTPUTS
@@ -250,13 +240,13 @@ for number_machine in range(0, number_machines):
         except Exception:
             print("The machine " + str(number_machine) + " is not started yet!!")
             time.sleep(5)
-    stdin, stdout, stderr = ssh.exec_command("cd brkga-tsp; tar -cvJf outputs" + str(number_machine) + ".tar.xz Output")
+    stdin, stdout, stderr = ssh.exec_command("cd brkga; tar -cvJf outputs" + str(number_machine) + ".tar.xz Output")
     tmp = stdout.read()
     print(">>> compress the directory where is the output")
     scp = SCPClient(ssh.get_transport())
-    scp.get("brkga-tsp/outputs" + str(number_machine) + ".tar.xz")
-    copy2("outputs" + str(number_machine) + ".tar.xz", "Outputs/")
-    remove("outputs" + str(number_machine) + ".tar.xz")
+    scp.get("brkga/outputs" + str(number_machine) + ".tar.xz")
+    #copy2("outputs" + str(number_machine) + ".tar.xz", "Outputs/")
+    #remove("outputs" + str(number_machine) + ".tar.xz")
 
 
 #to get from the virtual machine to my script scp.get()

@@ -1,0 +1,10 @@
+numbergenerations=30
+input directory=TSPInput
+output directory=Output
+flagconfiginstances=yes
+p=500
+pe=0.10
+pm=0.10
+rhoe=0.70
+K=3
+MAXT=2
