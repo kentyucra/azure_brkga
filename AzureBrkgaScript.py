@@ -87,7 +87,7 @@ storage_accounts = sms.list_storage_accounts()
 if len(storage_accounts)==0:
     available = sms.check_storage_account_name_availability(name_account)
     if available.result == False:
-        print "Name account already exists"
+        print("Name account already exists")
         exit(1)
     storage_account = sms.create_storage_account(name_account, desc, label, location = location)
     wait_for_async(storage_account.request_id, "Creating storage account", "Create storage account", 1000)
