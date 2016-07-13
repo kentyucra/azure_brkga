@@ -252,7 +252,7 @@ for number_machine in range(0, number_machines):
             time.sleep(5)
     stdin, stdout, stderr = ssh.exec_command("cd brkga-tsp; tar -cvJf outputs" + str(number_machine) + ".tar.xz Output")
     tmp = stdout.read()
-    print(">>> compress the carpet where is the output")
+    print(">>> compress the directory where is the output")
     scp = SCPClient(ssh.get_transport())
     scp.get("brkga-tsp/outputs" + str(number_machine) + ".tar.xz")
     copy2("outputs" + str(number_machine) + ".tar.xz", "Outputs/")
