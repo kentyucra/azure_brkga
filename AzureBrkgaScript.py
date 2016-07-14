@@ -13,6 +13,7 @@ from azure.storage.blob import ContentSettings
 from azure.storage.blob.models import PublicAccess
 import json
 import paramiko
+import threading
 from scp import SCPClient
 from shutil import copy2
 from os import mkdir, remove, path
@@ -198,15 +199,14 @@ for number_machine in range(0, number_machines):
 
 
 '''
-RUNING IN PARALLEL IN THE MACHINES
+RUNING IN PARALLEL IN THE MACHINES WITH THREATS
 '''
-stdouts = [0 for i in range(number_machines)]
 
-for number_machine in range(0, number_machines):
-    name = 'azbrvm' + str(hash_number) + str(number_machine)
+outlock = threading.Lock()
+
+def runningBrkga(dns, number_machine):
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    dns = name + '.cloudapp.net'
     for i in range(100):
         try:
             ssh.connect(dns, username='azurebrkga', password='Azurebrkga1')
@@ -215,15 +215,25 @@ for number_machine in range(0, number_machines):
             print("The machine " + str(number_machine) + " is not started yet!!")
             time.sleep(5)
     seed = random.randint(1,99999999)
-    stdin, stdouts[number_machine], stderr = ssh.exec_command("cd brkga; ./brkga config " + str(seed))
+    stdin, stdout, stderr = ssh.exec_command("cd brkga; ./brkga config " + str(seed))
+    #time.sleep(10)
+    with outlock:
+        stdout.read()
     #tmp = stdout.read()
-    print(">>> the brkga was executed")
+    print(">>> the brkga of the machine "+str(number_machine)+" was executed")
 
-'''
-WAITING FOR THE OUTPUTS
-'''
+threads = []
+
 for number_machine in range(0, number_machines):
-    stdouts[number_machine].read()
+    name = 'azbrvm' + str(hash_number) + str(number_machine)
+    dns = name + '.cloudapp.net'
+    t = threading.Thread(target = runningBrkga, args = (dns, number_machine, ))
+    t.start()
+    threads.append(t)
+
+for t in threads:
+    t.join()
+
 
 '''
 COMPRESING THE OUTPUTS AND COPYING TO THE SCRIPT
@@ -245,8 +255,8 @@ for number_machine in range(0, number_machines):
     print(">>> compress the directory where is the output")
     scp = SCPClient(ssh.get_transport())
     scp.get("brkga/outputs" + str(number_machine) + ".tar.xz")
-    #copy2("outputs" + str(number_machine) + ".tar.xz", "Outputs/")
-    #remove("outputs" + str(number_machine) + ".tar.xz")
+    copy2("outputs" + str(number_machine) + ".tar.xz", "Outputs/")
+    remove("outputs" + str(number_machine) + ".tar.xz")
 
 
 #to get from the virtual machine to my script scp.get()
@@ -275,4 +285,3 @@ time.sleep(400)
 block_blob_service.delete_container(name_container)
 time.sleep(20)
 sms.delete_storage_account(name_account)
-
