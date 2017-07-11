@@ -83,4 +83,5 @@ In order to use the azure script we need to install the python sdk for azure (se
 [6] https://drive.google.com/file/d/0B3IDGkTJuIvFbVl4aHotcWhtZFE/view?usp=sharing
 
 [7] JF Gonçalves, MGC Resende, Journal of Heuristics 17 (5), 487-525
+
 [8] https://azure.microsoft.com/en-us/documentation/articles/python-how-to-install/
