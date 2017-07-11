@@ -71,10 +71,16 @@ In order to use the azure script we need to install the python sdk for azure (se
 # REFERENCES
 
 [1] http://www.optimization-online.org/DB_FILE/2011/10/3200.pdf
+
 [2] https://github.com/rfrancotoso/brkgaAPI
+
 [3] https://blogs.msdn.microsoft.com/mschray/2015/05/13/getting-your-azure-guid-subscription-id/
+
 [4] https://azure.microsoft.com/en-us/documentation/articles/python-how-to-install/
+
 [5] https://azure.microsoft.com/en-us/documentation/articles/cloud-services-python-how-to-use-service-management/
+
 [6] https://drive.google.com/file/d/0B3IDGkTJuIvFbVl4aHotcWhtZFE/view?usp=sharing
+
 [7] JF Gonçalves, MGC Resende, Journal of Heuristics 17 (5), 487-525
 [8] https://azure.microsoft.com/en-us/documentation/articles/python-how-to-install/
